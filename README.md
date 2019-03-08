@@ -1,3 +1,3 @@
-# MQTT_manual_ProjectNetwork
+# MQTT Manual - Project Network
 -------------------------------------------------------------------------------------------
-meen
+59070701036 Thanamongkhon Yamdej
