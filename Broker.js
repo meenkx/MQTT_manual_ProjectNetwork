@@ -16,7 +16,7 @@ var server = net.createServer(function(client) {
         var text = temp.split(" "); //แบ่งคำเพื้อแยกข้อมูล
         if(text[0] == 'publish'){ // สำหรับ publisher
             console.log('Client Publisher connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
-
+            console.log(' - ['+text[3] +'] received from a publisher and sends it to all subscribers for that topic [' + text[2] + '] - ')
             //เก็บข้อมูล Publisher คนนั้นๆ เป็นรูปแบบ struct
             publisher[countPublisher] = {};
             publisher[countPublisher].address = client; //เก็บข้อมูลการเชื่อมต่อของ publisher นี้
@@ -41,12 +41,12 @@ var server = net.createServer(function(client) {
 
                 for (PB = 0; PB < Object.keys(publisher).length; PB++) {
                     for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
-                        if(subscriber[SB].ip == publisher[PB].ip){
+                        if(subscriber[SB].ip == publisher[PB].ip && subscriber[SB] != undefined && publisher[PB]!= undefined){
                             publisher[PB].address.end('Send data to subscriber complete');
+                            // delete subscriber[SB];
+                            // delete publisher[PB];
                         }
-                        delete subscriber[SB];
                     }
-                    delete publisher[PB];
                 }
             }
 
@@ -54,7 +54,6 @@ var server = net.createServer(function(client) {
         }
         else if(text[0] == 'subscribe'){
             console.log('Client Subscriber ['+countSubscriber+'] connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
-
             subscriber[countSubscriber] = {};
             subscriber[countSubscriber].address = client; // เก็บข้อมูล address client
             subscriber[countSubscriber].ip = text[1]; // เก็บข้อมูล ip subscriber คนนั้นๆ
