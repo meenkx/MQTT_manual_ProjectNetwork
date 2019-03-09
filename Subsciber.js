@@ -15,7 +15,7 @@ function getConnSubcriber(topic){
 
     // สร้าง TCP client.
     var client = net.createConnection(option, function () {
-        console.log('ผู้สมัครรับข้อมูล ได้สมัครรับข้อมูลหัวข้อ : ' + topic);
+        console.log('Subscriber is subscribe topic : ' + topic);
         console.log('Connection local address : ' + client.localAddress + ":" + client.localPort);
         console.log('Connection remote address : ' + client.remoteAddress + ":" + client.remotePort);
         console.log('-----------------------------------------------------');
@@ -26,12 +26,12 @@ function getConnSubcriber(topic){
 
     // เมื่อได้รับข้อมูลจาก server ตอบสนองมา.
     client.on('data', function (data) {
-        console.log('ได้รับข้อมูลจากเซิร์ฟเวอร์ : ' + data);
+        console.log('Receive information from the server : ' + data);
     });
 
     // เมื่อการเชื่อมต่อถูกตัดการเชื่อมต่อ.
     client.on('end',function () {
-        console.log('Client socket ยกเลิกการเชื่อมต่อ. ');
+        console.log('Client socket disconnect. ');
     });
 
     client.on('timeout', function () {

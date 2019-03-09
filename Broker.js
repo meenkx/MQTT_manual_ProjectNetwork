@@ -15,7 +15,7 @@ var server = net.createServer(function(client) {
         var temp = JSON.parse(data); //แปลงข้อมูลที่ได้รับเข้ามาในรูปแบบ JSON
         var text = temp.split(" "); //แบ่งคำเพื้อแยกข้อมูล
         if(text[0] == 'publish'){ // สำหรับ publisher
-            console.log('Client Publisher เชื่อมต่อเข้ามา. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
+            console.log('Client Publisher connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
 
             //เก็บข้อมูล Publisher คนนั้นๆ เป็นรูปแบบ struct
             publisher[countPublisher] = {};
@@ -25,7 +25,7 @@ var server = net.createServer(function(client) {
             publisher[countPublisher].data = text[3]; //เก็บข้อมูลของ topic นี้
 
             if(Object.keys(subscriber).length <= 0){
-                publisher[countPublisher].address.end('ณ นี้ยังไม่มีข้อมูลผู้สมัคร');
+                publisher[countPublisher].address.end('There is currently no subscribe information in this topic .');
                 delete publisher[countPublisher];
             }else{
                 //เพื่อทำการหาว่า Publisher นั้นตรงกับ Subscriber ที่สมัครใน topic ใหนบ้าง
@@ -42,7 +42,7 @@ var server = net.createServer(function(client) {
                 for (PB = 0; PB < Object.keys(publisher).length; PB++) {
                     for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
                         if(subscriber[SB].ip == publisher[PB].ip){
-                            publisher[PB].address.end('ส่งข้อมูลไปยัง subscriber สมบูรณ์');
+                            publisher[PB].address.end('Send data to subscriber complete');
                         }
                         delete subscriber[SB];
                     }
@@ -53,7 +53,7 @@ var server = net.createServer(function(client) {
             // countPublisher ++ ;
         }
         else if(text[0] == 'subscribe'){
-            console.log('Client Subscriber ['+countSubscriber+'] เชื่อมต่อเข้ามา. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
+            console.log('Client Subscriber ['+countSubscriber+'] connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
 
             subscriber[countSubscriber] = {};
             subscriber[countSubscriber].address = client; // เก็บข้อมูล address client
@@ -69,14 +69,14 @@ var server = net.createServer(function(client) {
 
     // เมื่อ client ส่งข้อมูลเสร็จสมบูรณ์.
     client.on('end', function () {
-        console.log('ผู้เชื่อมต่อถูกตัดขาด.');
+        console.log('client disconnect.');
 
         // นับการเชื่อมต่อปัจจุบันทั้งหมด.
         server.getConnections(function (err, count) {
             if(!err)
             {
                 // รายงานจำนวนการเชื่อมต่อปัจจุบันในคอนโซลเซิร์ฟเวอร์
-                console.log("ยังมีจำนวนผูัใช้เชื่อมต่ออยู่ %d คน ", count);
+                console.log("Server have a %d client", count);
             }else
             {
                 console.error(JSON.stringify(err));
@@ -96,7 +96,7 @@ server.listen(9999, function () {
     // รับข้อมูลที่อยู่เซิร์ฟเวอร์.
     var serverInfo = server.address();
     var serverInfoJson = JSON.stringify(serverInfo);
-    console.log('TCP server ถูกเปิดใช้งานบนที่อยู่ address นี้ : ' + serverInfoJson);
+    console.log('TCP server is enabled on this address : ' + serverInfoJson);
 
     server.on('close', function () {
         console.log('TCP server socket is closed.');
