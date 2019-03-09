@@ -3,13 +3,10 @@ var publisher = {}; // เก็บข้อมูล Publisher
 var subscriber = {}; // เก็บข้อมูล Subscriber
 var countPublisher = 0 ; // นับจำนวน Publisher
 var countSubscriber = 0 ; // นับจำนวน Sublisher
-var positionTopic = 0 ;  // เก็บตำแหน่งของหัวข้อนั้น ๆ
-var tempTopic ;
-var tempIp ;
+var PB , SB ;
 //สร้างและส่งคืนเน็ตการเชื่อมต่อตามกระบวนการ . Object ฝั่งเซิร์ฟเวอร์ . ฟังก์ชั่นจะถูกเรียกใช้เมื่อ client เชื่อมต่อกับเซิร์ฟเวอร์นี้
 var server = net.createServer(function(client) {
     
-    console.log('Client เชื่อมต่อเข้ามา. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
     client.setEncoding('utf-8'); // encode ให้อ่านออก
     client.setTimeout(300000); // set เวลาเมื่อรอนานเกินไป
 
@@ -18,6 +15,7 @@ var server = net.createServer(function(client) {
         var temp = JSON.parse(data); //แปลงข้อมูลที่ได้รับเข้ามาในรูปแบบ JSON
         var text = temp.split(" "); //แบ่งคำเพื้อแยกข้อมูล
         if(text[0] == 'publish'){ // สำหรับ publisher
+            console.log('Client Publisher เชื่อมต่อเข้ามา. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
 
             //เก็บข้อมูล Publisher คนนั้นๆ เป็นรูปแบบ struct
             publisher[countPublisher] = {};
@@ -31,26 +29,39 @@ var server = net.createServer(function(client) {
                 delete publisher[countPublisher];
             }else{
                 //เพื่อทำการหาว่า Publisher นั้นตรงกับ Subscriber ที่สมัครใน topic ใหนบ้าง
-                for (let SB = 0; SB < Object.keys(subscriber).length; SB++) {
-                    for (let PB = 0; PB < Object.keys(publisher).length; PB++) {
-                        if(subscriber[SB].topic == publisher[PB].topic && subscriber[SB].ip == publisher[PB].ip){
-                            subscriber[SB].address.end(publisher[PB].data); //ส่งข้อมูลไปหา Subscriber คนนั้นว่า มีข้อมูลใน topic นี้ว่าอย่างไร
-                            publisher[PB].address.end('ส่งข้อมูลไปยัง subscriber สมบูรณ์');
-                            delete publisher[PB];
-                            delete subscriber[SB];
+                for (PB = 0; PB < Object.keys(publisher).length; PB++) {
+                    for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
+                        if(subscriber[SB].ip == publisher[PB].ip){ // ip ของ publisher ต้องตรงกับ subscriber 
+                            if(subscriber[SB].topic == publisher[PB].topic){ // หัวข้อ Topic จะต้องตรงกันด้วย ถ้าทั้งสองอย่างตรงกันให้เริ่มส่งข้อมูลได้
+                                subscriber[SB].address.end(publisher[PB].data); //ส่งข้อมูลไปหา Subscriber คนนั้นว่า มีข้อมูลใน topic นี้ว่าอย่างไร
+                            }
                         }
                     }
+                }
+
+                for (PB = 0; PB < Object.keys(publisher).length; PB++) {
+                    for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
+                        if(subscriber[SB].ip == publisher[PB].ip){
+                            publisher[PB].address.end('ส่งข้อมูลไปยัง subscriber สมบูรณ์');
+                        }
+                        delete subscriber[SB];
+                    }
+                    delete publisher[PB];
                 }
             }
 
             // countPublisher ++ ;
         }
         else if(text[0] == 'subscribe'){
+            console.log('Client Subscriber ['+countSubscriber+'] เชื่อมต่อเข้ามา. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
+
             subscriber[countSubscriber] = {};
             subscriber[countSubscriber].address = client; // เก็บข้อมูล address client
             subscriber[countSubscriber].ip = text[1]; // เก็บข้อมูล ip subscriber คนนั้นๆ
             subscriber[countSubscriber].topic =  text[2]; // เก็บหัวข้อที่ client สมัครรับข้อมูล
+
             countSubscriber ++ ;
+            // console.log('count > ' + countSubscriber);
         }
 
         
