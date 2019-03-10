@@ -15,7 +15,7 @@ var server = net.createServer(function(client) {
         var temp = JSON.parse(data); //แปลงข้อมูลที่ได้รับเข้ามาในรูปแบบ JSON
         var text = temp.split(" "); //แบ่งคำเพื้อแยกข้อมูล
         if(text[0] == 'publish'){ // สำหรับ publisher
-            console.log('Client Publisher connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
+            console.log('Client Publisher ['+countPublisher+'] connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
             console.log(' - ['+text[3] +'] received from a publisher and sends it to all subscribers for that topic [' + text[2] + '] - ')
             //เก็บข้อมูล Publisher คนนั้นๆ เป็นรูปแบบ struct
             publisher[countPublisher] = {};
@@ -43,10 +43,10 @@ var server = net.createServer(function(client) {
                     for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
                         if(subscriber[SB].ip == publisher[PB].ip && subscriber[SB] != undefined && publisher[PB]!= undefined){
                             publisher[PB].address.end('Send data to subscriber complete');
-                            // delete subscriber[SB];
-                            // delete publisher[PB];
-                        }
+                            //delete subscriber[SB];
+                        } 
                     }
+                    //delete publisher[PB];
                 }
             }
 
