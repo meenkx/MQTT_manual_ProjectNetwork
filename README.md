@@ -1,6 +1,6 @@
 # MQTT Manual by nodejs without mqtt plugin
 # - Project Network
--------------------------------------------------------------------------------------------
+
 59070501018	Chockanan	Wongsuwan </br>
 59070501022	Natchatorn	Reungkham </br>
 59070501030	Nutsuda	Rachasik </br>
