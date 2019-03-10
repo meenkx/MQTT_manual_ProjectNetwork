@@ -27,13 +27,18 @@ var server = net.createServer(function(client) {
             if(Object.keys(subscriber).length <= 0){
                 publisher[countPublisher].address.end('There is currently no subscribe information in this topic .');
                 delete publisher[countPublisher];
+                countPublisher = -1;
             }else{
                 //เพื่อทำการหาว่า Publisher นั้นตรงกับ Subscriber ที่สมัครใน topic ใหนบ้าง
                 for (PB = 0; PB < Object.keys(publisher).length; PB++) {
-                    for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
-                        if(subscriber[SB].ip == publisher[PB].ip){ // ip ของ publisher ต้องตรงกับ subscriber 
-                            if(subscriber[SB].topic == publisher[PB].topic){ // หัวข้อ Topic จะต้องตรงกันด้วย ถ้าทั้งสองอย่างตรงกันให้เริ่มส่งข้อมูลได้
-                                subscriber[SB].address.end(publisher[PB].data); //ส่งข้อมูลไปหา Subscriber คนนั้นว่า มีข้อมูลใน topic นี้ว่าอย่างไร
+                    if(publisher[PB].ip){
+                        for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
+                            if(subscriber[SB].ip){
+                                if(subscriber[SB].ip == publisher[PB].ip){ // ip ของ publisher ต้องตรงกับ subscriber 
+                                    if(subscriber[SB].topic == publisher[PB].topic){ // หัวข้อ Topic จะต้องตรงกันด้วย ถ้าทั้งสองอย่างตรงกันให้เริ่มส่งข้อมูลได้
+                                        subscriber[SB].address.end(publisher[PB].data); //ส่งข้อมูลไปหา Subscriber คนนั้นว่า มีข้อมูลใน topic นี้ว่าอย่างไร
+                                    }
+                                }
                             }
                         }
                     }
@@ -41,16 +46,17 @@ var server = net.createServer(function(client) {
 
                 for (PB = 0; PB < Object.keys(publisher).length; PB++) {
                     for (SB = 0; SB < Object.keys(subscriber).length; SB++) {
-                        if(subscriber[SB].ip == publisher[PB].ip && subscriber[SB] != undefined && publisher[PB]!= undefined){
-                            publisher[PB].address.end('Send data to subscriber complete');
-                            //delete subscriber[SB];
-                        } 
-                    }
-                    //delete publisher[PB];
+                        if(subscriber[SB].ip && publisher[PB].ip){
+                            if(subscriber[SB].ip == publisher[PB].ip){
+                                publisher[PB].address.end('Send data to subscriber complete');
+                                countPublisher=-1;
+                            } 
+                        }
+                    }      
                 }
             }
 
-            // countPublisher ++ ;
+            countPublisher ++ ;
         }
         else if(text[0] == 'subscribe'){
             console.log('Client Subscriber ['+countSubscriber+'] connected. Client local address : ' + client.localAddress + ':' + client.localPort + '. client remote address : ' + client.remoteAddress + ':' + client.remotePort); //แสดงผลว่ามีใครเข้ามาเชื่อมบ้าง
@@ -90,7 +96,7 @@ var server = net.createServer(function(client) {
 });
 
 // ทำให้เซิร์ฟเวอร์เป็นเซิร์ฟเวอร์ TCP ที่รับฟังพอร์ต 9999.
-server.listen(9999, function () {
+server.listen(9999,'127.0.0.1', function () {
 
     // รับข้อมูลที่อยู่เซิร์ฟเวอร์.
     var serverInfo = server.address();
