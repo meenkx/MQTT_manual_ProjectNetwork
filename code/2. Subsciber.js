@@ -55,5 +55,4 @@ readCommand.question('Subscribe command >> ', (answer) => {
   });
 
   // subscribe 202.44.12.85 /room1/light
-
   // subscribe 10.0.3.2 /room2/lcd

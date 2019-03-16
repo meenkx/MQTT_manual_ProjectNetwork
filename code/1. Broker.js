@@ -1,4 +1,6 @@
 var net = require('net');
+const util = require('util')
+
 var publisher = {}; // เก็บข้อมูล Publisher
 var subscriber = {}; // เก็บข้อมูล Subscriber
 var countPublisher = 0 ; // นับจำนวน Publisher
@@ -64,6 +66,10 @@ var server = net.createServer(function(client) {
             subscriber[countSubscriber].address = client; // เก็บข้อมูล address client
             subscriber[countSubscriber].ip = text[1]; // เก็บข้อมูล ip subscriber คนนั้นๆ
             subscriber[countSubscriber].topic =  text[2]; // เก็บหัวข้อที่ client สมัครรับข้อมูล
+
+            // print address client connected
+            // console.log('address vv ');
+            // console.log(util.inspect(subscriber[countSubscriber].address, false, null, true /* enable colors */))
 
             countSubscriber ++ ;
             // console.log('count > ' + countSubscriber);
