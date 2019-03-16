@@ -1,6 +1,9 @@
 var net = require('net');
 const util = require('util')
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2c460f7f40c425995b97608bfd85200b9c2bf8b2
 var publisher = {}; // เก็บข้อมูล Publisher
 var subscriber = {}; // เก็บข้อมูล Subscriber
 var countPublisher = 0 ; // นับจำนวน Publisher
@@ -67,10 +70,15 @@ var server = net.createServer(function(client) {
             subscriber[countSubscriber].ip = text[1]; // เก็บข้อมูล ip subscriber คนนั้นๆ
             subscriber[countSubscriber].topic =  text[2]; // เก็บหัวข้อที่ client สมัครรับข้อมูล
 
+<<<<<<< HEAD
             // print address client connected
             // console.log('address vv ');
             // console.log(util.inspect(subscriber[countSubscriber].address, false, null, true /* enable colors */))
 
+=======
+            //view client conneted detail
+            // console.log(util.inspect(client, false, null, true /* enable colors */));
+>>>>>>> 2c460f7f40c425995b97608bfd85200b9c2bf8b2
             countSubscriber ++ ;
             // console.log('count > ' + countSubscriber);
         }
